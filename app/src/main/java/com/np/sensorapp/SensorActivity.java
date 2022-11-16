@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class SensorActivity extends AppCompatActivity {
@@ -108,18 +109,29 @@ public class SensorActivity extends AppCompatActivity {
     private class SensorHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private Sensor sensor;
+        private View container;
         private TextView sensorTextView;
 
         public SensorHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.sensor_list_item, parent, false));
             itemView.setOnClickListener(this);
 
+            container = itemView.findViewById(R.id.sensorContainer);
             sensorTextView = itemView.findViewById(R.id.sensorNameTextView);
         }
 
         public void bind(Sensor sensor) {
             this.sensor = sensor;
             sensorTextView.setText(sensor.getName());
+
+            boolean supported = Arrays.stream(SensorDetailsActivity.SUPPORTED_SENSORS)
+                    .anyMatch(sensorType -> sensorType == sensor.getType());
+            if(supported) {
+                container.setBackgroundResource(R.color.supported_background);
+            }
+            else {
+                container.setBackgroundResource(R.color.unsupported_background);
+            }
         }
 
         @Override

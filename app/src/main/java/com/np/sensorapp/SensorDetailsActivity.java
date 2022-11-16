@@ -12,10 +12,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
 public class SensorDetailsActivity extends AppCompatActivity implements SensorEventListener2 {
 
     public static final String SENSOR_TAG = "sensor";
     public static final String KEY_EXTRA_SENSOR_ID = "KEY_EXTRA_SENSOR_ID";
+    public static final int[] SUPPORTED_SENSORS = new int[]{
+        Sensor.TYPE_LIGHT,
+        Sensor.TYPE_PROXIMITY
+    };
 
     private SensorManager sensorManager;
     private Sensor sensor;
@@ -29,16 +35,26 @@ public class SensorDetailsActivity extends AppCompatActivity implements SensorEv
         sensorTextView = findViewById(R.id.sensor_label);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        int type = getIntent().getIntExtra(KEY_EXTRA_SENSOR_ID, -1);
-        if(type != -1) {
-            sensor = sensorManager.getDefaultSensor(type);
-        }
 
-        if(sensor == null) {
-            sensorTextView.setText(R.string.missing_sensor);
+        Bundle extra = getIntent().getExtras();
+        if(extra != null) {
+            int type = extra.getInt(KEY_EXTRA_SENSOR_ID, -1);
+
+            if(type != -1) {
+                sensor = sensorManager.getDefaultSensor(type);
+                if(Arrays.stream(SUPPORTED_SENSORS).noneMatch(sensorType -> sensorType == type)) {
+                    sensorTextView.setText(R.string.unsupported_sensor);
+                }
+                else {
+                    sensorTextView.setText(getResources().getString(R.string.sensor_label, 0F));
+                }
+            }
+            else {
+                sensorTextView.setText(R.string.missing_sensor);
+            }
         }
         else {
-            sensorTextView.setText(getResources().getString(R.string.sensor_label, 0F));
+            sensorTextView.setText(R.string.missing_sensor);
         }
     }
 
