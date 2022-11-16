@@ -1,28 +1,87 @@
 package com.np.sensorapp;
 
+import android.content.Context;
+import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import java.util.List;
 
 public class SensorActivity extends AppCompatActivity {
+
+    public static final String KEY_SUBTITLE_VISIBLE = "KEY_SUBTITLE_VISIBLE";
 
     private SensorManager sensorManager;
     private List<Sensor> sensorList;
 
     private RecyclerView recyclerView;
     private SensorAdapter sensorAdapter;
+
+    private boolean subtitleVisible = false;
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_SUBTITLE_VISIBLE, subtitleVisible);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if(savedInstanceState != null) {
+            subtitleVisible = savedInstanceState.getBoolean(KEY_SUBTITLE_VISIBLE);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.sensor_menu, menu);
+
+        MenuItem subtitleItem = menu.findItem(R.id.show_subtitle);
+        if(subtitleVisible) {
+            subtitleItem.setTitle(R.string.hide_subtitle);
+        }
+        else  {
+            subtitleItem.setTitle(R.string.show_subtitle);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.show_subtitle:
+                subtitleVisible = !subtitleVisible;
+                invalidateOptionsMenu();
+                updateSubtitle();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateSubtitle() {
+        String subtitle = getString(R.string.sensors_count, sensorList.size());
+        if(!subtitleVisible) {
+            subtitle = null;
+        }
+        getSupportActionBar().setSubtitle(subtitle);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,21 +103,30 @@ public class SensorActivity extends AppCompatActivity {
         }
     }
 
-    private class SensorHolder extends RecyclerView.ViewHolder {
+
+
+    private class SensorHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private Sensor sensor;
-        private ImageView sensorImageView;
         private TextView sensorTextView;
 
         public SensorHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.sensor_list_item, parent, false));
-            sensorImageView = itemView.findViewById(R.id.sensorIconImageView);
+            itemView.setOnClickListener(this);
+
             sensorTextView = itemView.findViewById(R.id.sensorNameTextView);
         }
 
         public void bind(Sensor sensor) {
             this.sensor = sensor;
             sensorTextView.setText(sensor.getName());
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), SensorDetailsActivity.class);
+            intent.putExtra(SensorDetailsActivity.KEY_EXTRA_SENSOR_ID, sensor.getType());
+            startActivity(intent);
         }
     }
 
