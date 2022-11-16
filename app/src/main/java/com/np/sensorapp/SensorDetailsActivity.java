@@ -18,10 +18,6 @@ public class SensorDetailsActivity extends AppCompatActivity implements SensorEv
 
     public static final String SENSOR_TAG = "sensor";
     public static final String KEY_EXTRA_SENSOR_ID = "KEY_EXTRA_SENSOR_ID";
-    public static final int[] SUPPORTED_SENSORS = new int[]{
-        Sensor.TYPE_LIGHT,
-        Sensor.TYPE_PROXIMITY
-    };
 
     private SensorManager sensorManager;
     private Sensor sensor;
@@ -42,7 +38,7 @@ public class SensorDetailsActivity extends AppCompatActivity implements SensorEv
 
             if(type != -1) {
                 sensor = sensorManager.getDefaultSensor(type);
-                if(Arrays.stream(SUPPORTED_SENSORS).noneMatch(sensorType -> sensorType == type)) {
+                if(Arrays.stream(SensorActivity.SUPPORTED_SENSORS).noneMatch(sensorType -> sensorType == type)) {
                     sensorTextView.setText(R.string.unsupported_sensor);
                 }
                 else {

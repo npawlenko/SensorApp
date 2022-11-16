@@ -5,7 +5,16 @@
     <string name="unsupported_sensor">Nieobsługiwany czujnik</string>
     <string name="show_subtitle">Pokaż podtytuł</string>
     <string name="hide_subtitle">Ukryj podtytuł</string>
+    <string name="loc_button_label">Wciśnij przycisk, aby pobrać ostatnią lokalizację</string>
+    <string name="loc_button">Pokaż lokalizację</string>
     <string name="sensor_label">Wartość czujnika: %f</string>
     <string name="light_sensor_label">Wartość czujnika światła: %.2flux</string>
     <string name="proximity_sensor_label">Wartość czujnika odległości: %.2fcm</string>
+    <string name="location_permission_denied">Odmowiono uprawnienia do odczytu lokalizacji</string>
+    <string name="no_location">Nie udało się pobrać lokalizacji</string>
+    <string name="address_button">Pobierz adres</string>
+    <string name="address_text">Adres: %1$s \n Czas: %2$tr</string>
+    <string name="service_not_available">Usługa nie jest dostępna</string>
+    <string name="no_address_found">Nie znaleziono adresu dla twojej lokalizacji</string>
+    <string name="location_text">Szerokość geograficzna: %1$.4f \n Długość geograficzna: %2.4f \n Czas: %3$tr</string>
 </resources>

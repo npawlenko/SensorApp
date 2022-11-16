@@ -24,6 +24,13 @@ public class SensorActivity extends AppCompatActivity {
 
     public static final String KEY_SUBTITLE_VISIBLE = "KEY_SUBTITLE_VISIBLE";
 
+    public static final int[] SUPPORTED_SENSORS = new int[]{
+            Sensor.TYPE_LIGHT,
+            Sensor.TYPE_PROXIMITY,
+            Sensor.TYPE_MAGNETIC_FIELD,
+            Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED
+    };
+
     private SensorManager sensorManager;
     private List<Sensor> sensorList;
 
@@ -124,7 +131,7 @@ public class SensorActivity extends AppCompatActivity {
             this.sensor = sensor;
             sensorTextView.setText(sensor.getName());
 
-            boolean supported = Arrays.stream(SensorDetailsActivity.SUPPORTED_SENSORS)
+            boolean supported = Arrays.stream(SUPPORTED_SENSORS)
                     .anyMatch(sensorType -> sensorType == sensor.getType());
             if(supported) {
                 container.setBackgroundResource(R.color.supported_background);
@@ -136,9 +143,18 @@ public class SensorActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(getApplicationContext(), SensorDetailsActivity.class);
-            intent.putExtra(SensorDetailsActivity.KEY_EXTRA_SENSOR_ID, sensor.getType());
-            startActivity(intent);
+            Intent intent;
+            switch(sensor.getType()) {
+                case Sensor.TYPE_MAGNETIC_FIELD:
+                case Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED:
+                    intent = new Intent(getApplicationContext(), LocationActivity.class);
+                    startActivity(intent);
+                    break;
+                default:
+                    intent = new Intent(getApplicationContext(), SensorDetailsActivity.class);
+                    intent.putExtra(SensorDetailsActivity.KEY_EXTRA_SENSOR_ID, sensor.getType());
+                    startActivity(intent);
+            }
         }
     }
 
